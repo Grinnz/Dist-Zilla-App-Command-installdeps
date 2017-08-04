@@ -11,6 +11,7 @@ our $VERSION = '0.001';
 sub abstract { 'Install author dependencies for a Dist::Zilla dist' }
 
 sub opt_spec {
+  [ 'root=s' => 'the root of the dist; defaults to .' ],
   [ 'install-command=s', 'command to run to install dependencies (e.g. "cpanm")' ],
   [ 'recommends!', 'install recommended dependencies', { default => 1 } ],
   [ 'suggests!', 'install suggested dependencies', { default => 0 } ],
@@ -66,12 +67,12 @@ sub extract_dependencies {
 sub execute {
   my ($self, $opt, $arg) = @_;
   
-  my $cmd = $opt->install_command ? $opt->install_command : 'cpanm';
+  my $cmd = $opt->install_command || 'cpanm';
   
   require Dist::Zilla::Path;
   require Dist::Zilla::Util::AuthorDeps;
   my $authordeps = Dist::Zilla::Util::AuthorDeps::extract_author_deps(
-    Dist::Zilla::Path::path($self->zilla->root), 1 # missing deps only
+    Dist::Zilla::Path::path($opt->root // '.'), 1 # missing deps only
   );
   my @install_author;
   foreach my $rec (@$authordeps) {
@@ -81,7 +82,8 @@ sub execute {
   if (@install_author) {
     # user provided command needs to be passed to the shell
     my $author_cmd = $cmd . ' ' . shell_quote @install_author;
-    $self->zilla->log_debug([ 'installing author deps via %s', $author_cmd ]);
+    # can't use zilla until after authordeps are satisfied
+    $self->app->chrome->logger->log_debug("installing author deps via $author_cmd");
     system $author_cmd;
   }
   
@@ -120,6 +122,11 @@ dependencies are installed, including the develop phase. Similar to running:
   dzil listdeps --missing --author --cpanm-versions | cpanm
 
 =head1 OPTIONS
+
+=head2 --root
+
+Root of the dist to use when reading F<dist.ini> to determine authordeps,
+defaults to current working directory.
 
 =head2 --install-command
 
