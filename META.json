@@ -65,6 +65,15 @@
    },
    "release_status" : "stable",
    "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/Grinnz/Dist-Zilla-App-Command-installdeps/issues"
+      },
+      "homepage" : "https://github.com/Grinnz/Dist-Zilla-App-Command-installdeps",
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/Grinnz/Dist-Zilla-App-Command-installdeps.git",
+         "web" : "https://github.com/Grinnz/Dist-Zilla-App-Command-installdeps"
+      },
       "x_IRC" : "irc://irc.perl.org/#distzilla"
    },
    "version" : "0.001",
