@@ -73,6 +73,7 @@ sub execute {
   my $pid = fork // die "Fork failed: $!";
   if ($pid) {
     waitpid $pid, 0;
+    exit $?>>8 if $?;
   } else {
     require Dist::Zilla::Path;
     require Dist::Zilla::Util::AuthorDeps;
@@ -88,7 +89,7 @@ sub execute {
       # user provided command needs to be passed to the shell
       my $author_cmd = $cmd . ' ' . shell_quote @install_author;
       # can't use zilla until after authordeps are satisfied
-      $self->app->chrome->logger->log_debug("installing author deps via $author_cmd");
+      $self->app->chrome->logger->log_debug("[DZ] installing author deps: $author_cmd");
       system $author_cmd;
     }
     
@@ -103,7 +104,7 @@ sub execute {
   if (@install_dist) {
     # user provided command needs to be passed to the shell
     my $dist_cmd = $cmd . ' ' . shell_quote @install_dist;
-    $self->zilla->log_debug([ 'installing distribution deps via %s', $dist_cmd ]);
+    $self->zilla->log_debug("installing distribution deps: $dist_cmd");
     system $dist_cmd;
   }
 }
