@@ -69,22 +69,29 @@ sub execute {
   
   my $cmd = $opt->install_command || 'cpanm';
   
-  require Dist::Zilla::Path;
-  require Dist::Zilla::Util::AuthorDeps;
-  my $authordeps = Dist::Zilla::Util::AuthorDeps::extract_author_deps(
-    Dist::Zilla::Path::path($opt->root // '.'), 1 # missing deps only
-  );
-  my @install_author;
-  foreach my $rec (@$authordeps) {
-    push @install_author, map "$_~$rec->{$_}", keys %$rec;
-  }
-  
-  if (@install_author) {
-    # user provided command needs to be passed to the shell
-    my $author_cmd = $cmd . ' ' . shell_quote @install_author;
-    # can't use zilla until after authordeps are satisfied
-    $self->app->chrome->logger->log_debug("installing author deps via $author_cmd");
-    system $author_cmd;
+  my $pid = fork // die "Fork failed: $!";
+  if ($pid) {
+    waitpid $pid, 0;
+  } else {
+    require Dist::Zilla::Path;
+    require Dist::Zilla::Util::AuthorDeps;
+    my $authordeps = Dist::Zilla::Util::AuthorDeps::extract_author_deps(
+      Dist::Zilla::Path::path($opt->root // '.'), 1 # missing deps only
+    );
+    my @install_author;
+    foreach my $rec (@$authordeps) {
+      push @install_author, map "$_~$rec->{$_}", keys %$rec;
+    }
+    
+    if (@install_author) {
+      # user provided command needs to be passed to the shell
+      my $author_cmd = $cmd . ' ' . shell_quote @install_author;
+      # can't use zilla until after authordeps are satisfied
+      $self->app->chrome->logger->log_debug("installing author deps via $author_cmd");
+      system $author_cmd;
+    }
+    
+    exit 0;
   }
   
   my @phases = qw(build test configure runtime develop);
@@ -141,13 +148,6 @@ Install recommended dependencies (or don't). Defaults to on.
 =head2 --suggests / --no-suggests
 
 Install suggested dependencies (or don't). Defaults to off.
-
-=head1 CAVEATS
-
-If authordeps are installed but not of a sufficient version, they will be
-updated but the old version will remain in memory so the second step of the
-command will fail. If this occurs, simply run the command again once the
-authordeps are updated. This may be improved in the future.
 
 =head1 BUGS
 
