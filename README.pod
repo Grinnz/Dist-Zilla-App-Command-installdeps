@@ -1,0 +1,59 @@
+=pod
+
+=head1 NAME
+
+Dist::Zilla::App::Command::installdeps - Install author dependencies for a
+Dist::Zilla dist
+
+=head1 SYNOPSIS
+
+  dzil installdeps [--install-command="cmd"] [--no-recommends] [--suggests]
+
+=head1 DESCRIPTION
+
+Installs all dependencies needed for building, testing, and releasing a
+distribution managed by L<Dist::Zilla>. First authordeps needed to build the
+distribution from F<dist.ini> are installed, then the distribution's
+dependencies are installed, including the develop phase. Similar to running:
+
+  dzil authordeps --missing | cpanm
+  dzil listdeps --missing --author --cpanm-versions | cpanm
+
+=head1 OPTIONS
+
+=head2 --install-command
+
+Command to run to install dependencies. Dependencies will be appended to the
+end of the command in the L<format expected by cpanm|cpanm/"(arguments)">.
+Defaults to just C<cpanm>.
+
+=head2 --recommends / --no-recommends
+
+Install recommended dependencies (or don't). Defaults to on.
+
+=head2 --suggests / --no-suggests
+
+Install suggested dependencies (or don't). Defaults to off.
+
+=head1 BUGS
+
+Report any issues on the public bugtracker.
+
+=head1 AUTHOR
+
+Dan Book <dbook@cpan.org>
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is Copyright (c) 2017 by Dan Book.
+
+This is free software, licensed under:
+
+  The Artistic License 2.0 (GPL Compatible)
+
+=head1 SEE ALSO
+
+L<Dist::Zilla::App::Command::authordeps>,
+L<Dist::Zilla::App::Command::listdeps>, L<Dist::Zilla::App::Command::stale>
+
+=cut
