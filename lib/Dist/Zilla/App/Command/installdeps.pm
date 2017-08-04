@@ -142,6 +142,13 @@ Install recommended dependencies (or don't). Defaults to on.
 
 Install suggested dependencies (or don't). Defaults to off.
 
+=head1 CAVEATS
+
+If authordeps are installed but not of a sufficient version, they will be
+updated but the old version will remain in memory so the second step of the
+command will fail. If this occurs, simply run the command again once the
+authordeps are updated. This may be improved in the future.
+
 =head1 BUGS
 
 Report any issues on the public bugtracker.
