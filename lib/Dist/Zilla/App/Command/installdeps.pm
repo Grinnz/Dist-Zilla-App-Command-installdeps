@@ -132,11 +132,6 @@ dependencies are installed, including the develop phase. Similar to running:
 
 =head1 OPTIONS
 
-=head2 --root
-
-Root of the dist to use when reading F<dist.ini> to determine authordeps,
-defaults to current working directory.
-
 =head2 --install-command
 
 Command to run to install dependencies. Dependencies will be appended to the
