@@ -69,6 +69,7 @@ sub execute {
   
   my $cmd = $opt->install_command || 'cpanm';
   
+  # do authordeps pass in a fork so loaded modules aren't used in later build
   my $pid = fork // die "Fork failed: $!";
   if ($pid) {
     waitpid $pid, 0;
