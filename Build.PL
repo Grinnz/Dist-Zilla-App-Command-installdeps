@@ -93,7 +93,6 @@ EOW
         "Dist::Zilla::App" => 0,
         "Dist::Zilla::Path" => 0,
         "Dist::Zilla::Util::AuthorDeps" => 0,
-        "IPC::System::Simple" => 0,
         "Module::Runtime" => 0,
         "String::ShellQuote" => 0,
         "perl" => "5.010001"

@@ -3,7 +3,6 @@ package Dist::Zilla::App::Command::installdeps;
 use strict;
 use warnings;
 use Dist::Zilla::App -command;
-use IPC::System::Simple 'system';
 use String::ShellQuote;
 
 our $VERSION = '0.001';
@@ -90,7 +89,9 @@ sub execute {
       my $author_cmd = $cmd . ' ' . shell_quote @install_author;
       # can't use zilla until after authordeps are satisfied
       $self->app->chrome->logger->log_debug("[DZ] installing author deps: $author_cmd");
-      system $author_cmd;
+      my $rc = system $author_cmd;
+      die "Failed to execute $cmd: $!" if $rc < 0;
+      die "Author deps installation failed with exit code " . ($rc >> 8) if $rc;
     }
     
     exit 0;
@@ -105,7 +106,9 @@ sub execute {
     # user provided command needs to be passed to the shell
     my $dist_cmd = $cmd . ' ' . shell_quote @install_dist;
     $self->zilla->log_debug("installing distribution deps: $dist_cmd");
-    system $dist_cmd;
+    my $rc = system $dist_cmd;
+    die "Failed to execute $cmd: $!" if $rc < 0;
+    die "Dependency installation failed with exit code " . ($rc >> 8) if $rc;
   }
 }
 
