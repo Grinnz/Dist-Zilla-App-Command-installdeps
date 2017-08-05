@@ -5,7 +5,7 @@ use warnings;
 use Dist::Zilla::App -command;
 use String::ShellQuote;
 
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 
 sub abstract { 'Install author dependencies for a Dist::Zilla dist' }
 
